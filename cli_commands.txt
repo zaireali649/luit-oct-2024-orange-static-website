@@ -1,1 +1,2 @@
 aws s3 cp index.html s3://luit-orange-oct-2024-cicd-beta/ --acl public-read
+aws s3 cp index.html s3://luit-orange-oct-2024-cicd-prod/ --acl public-read
