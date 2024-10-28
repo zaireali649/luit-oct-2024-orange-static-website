@@ -8,7 +8,7 @@ on:
   pull_request:
 
 jobs:
-  create_stack:
+  deploy_website:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -21,6 +21,12 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1  # Change this to your desired AWS region
 
-      - name: Deploy Website
+      - name: Deploy Website Beta
+        if: ${{ github.event_name == 'pull_request' && (!github.event.pull_request.merged || github.event.pull_request.base.ref != 'main') }}
         run: |
           aws s3 cp index.html s3://luit-orange-oct-2024-cicd-beta/ --acl public-read
+
+      - name: Deploy Website Prod
+        if: (github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main') || (github.event_name == 'push' && github.ref == 'refs/heads/main')
+        run: |
+          aws s3 cp index.html s3://luit-orange-oct-2024-cicd-prod/ --acl public-read
